@@ -13,7 +13,7 @@ function connectToDatabase()
         name TEXT NOT NULL,
         address TEXT NOT NULL,
         salary INTEGER NOT NULL
-    )";
+    );";
 
     if (!$link->exec($ddl)) {
         die("ERROR: Could not create table employees.");
@@ -23,9 +23,10 @@ function connectToDatabase()
     $ddl = "
     CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        email TEXT NOT NULL,
-        hash_password TEXT NOT NULL
-    )";
+        username TEXT NOT NULL UNIQUE,
+        password TEXT NOT NULL,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );";
 
     if (!$link->exec($ddl)) {
         die("ERROR: Could not create table users.");

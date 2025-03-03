@@ -78,6 +78,13 @@
                 ?>
             </div>
         </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="mt-5 mb-3 clearfix">
+                    <p class="pull-left"><a href="logout.php">Logout</a></p>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 </body>
