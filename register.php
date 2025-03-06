@@ -1,4 +1,6 @@
 <?php
+if ( !isset( $_SESSION ) ) session_start();
+
 // Include config file
 require_once "config.php";
 
@@ -93,7 +95,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     unset($pdo);
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>

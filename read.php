@@ -1,4 +1,12 @@
 <?php
+if ( !isset( $_SESSION ) ) session_start();
+
+// Check if the user is logged in, if not then redirect him to login page
+if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
+    header("location: login.php");
+    exit;
+}
+
 // Check existence of id parameter before processing further
 if (isset($_GET["id"]) && !empty(trim($_GET["id"]))) {
     // Include config file
@@ -39,7 +47,6 @@ if (isset($_GET["id"]) && !empty(trim($_GET["id"]))) {
     exit();
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
