@@ -1,4 +1,7 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', TRUE);
+
 function connectToDatabase()
 {
     $db_file = 'empregados.db';
@@ -37,4 +40,3 @@ function connectToDatabase()
 
 // Example usage (equivalent to $link in original code)
 $link = connectToDatabase();
-?>
