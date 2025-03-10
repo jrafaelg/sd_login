@@ -1,6 +1,6 @@
 <?php
 // Initialize the session
-if ( !isset( $_SESSION ) ) session_start();
+if (!isset($_SESSION)) session_start();
 
 // Check if the user is already logged in, if yes then redirect him to welcome page
 if (isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true) {
@@ -17,7 +17,8 @@ $username_err = $password_err = $login_err = "";
 
 // Processing form data when form is submitted
 //if ($_SERVER["REQUEST_METHOD"] == "POST") {
-if (!empty($_POST)){
+//if ($_SERVER["REQUEST_METHOD"] == "POST") {
+if (!empty($_POST)) {
 
     // Check if username is empty
     if (empty(trim($_POST["username"]))) {
@@ -53,8 +54,6 @@ if (!empty($_POST)){
             $hashed_password = $row["password"];
 
             if ($password == $hashed_password) {
-                // Password is correct, so start a new session
-                session_start();
 
                 // Store data in session variables
                 $_SESSION["loggedin"] = true;
@@ -106,7 +105,7 @@ if (!empty($_POST)){
 
     <?php
     if (!empty($login_err)) {
-    echo '<div class="alert alert-danger">' . $login_err . '</div>';
+        echo '<div class="alert alert-danger">' . $login_err . '</div>';
     }
     ?>
 
@@ -130,5 +129,6 @@ if (!empty($_POST)){
         <p>Don't have an account? <a href="register.php">Sign up now</a>.</p>
     </form>
 </div>
+<script src="js/bootstrap.bundle.js"></script>
 </body>
 </html>

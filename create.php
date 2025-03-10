@@ -1,9 +1,9 @@
 <?php
 // Initialize the session
-if ( !isset( $_SESSION ) ) session_start();
+if (!isset($_SESSION)) session_start();
 
 // Check if the user is logged in, if not then redirect him to login page
-if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
+if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
     header("location: login.php");
     exit;
 }
@@ -16,30 +16,30 @@ $name = $address = $salary = "";
 $name_err = $address_err = $salary_err = "";
 
 // Processing form data when form is submitted
-if($_SERVER["REQUEST_METHOD"] == "POST"){
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Validate name
     $input_name = trim($_POST["name"]);
-    if(empty($input_name)){
+    if (empty($input_name)) {
         $name_err = "Please enter a name.";
-    } else{
+    } else {
         $name = $input_name;
     }
 
     // Validate address
     $input_address = trim($_POST["address"]);
-    if(empty($input_address)){
+    if (empty($input_address)) {
         $address_err = "Please enter an address.";
-    } else{
+    } else {
         $address = $input_address;
     }
 
     // Validate salary
     $input_salary = trim($_POST["salary"]);
-    if(empty($input_salary)){
+    if (empty($input_salary)) {
         $salary_err = "Please enter the salary amount.";
-    } elseif(!ctype_digit($input_salary)){
+    } elseif (!ctype_digit($input_salary)) {
         $salary_err = "Please enter a positive integer value.";
-    } else{
+    } else {
         $salary = $input_salary;
     }
 
@@ -70,14 +70,14 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 }
 ?>
 
-    <!DOCTYPE html>
-    <html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Create Record</title>
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <style>
-        .wrapper{
+        .wrapper {
             width: 600px;
             margin: 0 auto;
         }
@@ -93,18 +93,23 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                 <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
                     <div class="form-group">
                         <label>Name</label>
-                        <input type="text" name="name" class="form-control <?php echo (!empty($name_err)) ? 'is-invalid' : ''; ?>" value="<?php echo $name; ?>">
-                        <span class="invalid-feedback"><?php echo $name_err;?></span>
+                        <input type="text" name="name"
+                               class="form-control <?php echo (!empty($name_err)) ? 'is-invalid' : ''; ?>"
+                               value="<?php echo $name; ?>">
+                        <span class="invalid-feedback"><?php echo $name_err; ?></span>
                     </div>
                     <div class="form-group">
                         <label>Address</label>
-                        <textarea name="address" class="form-control <?php echo (!empty($address_err)) ? 'is-invalid' : ''; ?>"><?php echo $address; ?></textarea>
-                        <span class="invalid-feedback"><?php echo $address_err;?></span>
+                        <textarea name="address"
+                                  class="form-control <?php echo (!empty($address_err)) ? 'is-invalid' : ''; ?>"><?php echo $address; ?></textarea>
+                        <span class="invalid-feedback"><?php echo $address_err; ?></span>
                     </div>
                     <div class="form-group">
                         <label>Salary</label>
-                        <input type="text" name="salary" class="form-control <?php echo (!empty($salary_err)) ? 'is-invalid' : ''; ?>" value="<?php echo $salary; ?>">
-                        <span class="invalid-feedback"><?php echo $salary_err;?></span>
+                        <input type="text" name="salary"
+                               class="form-control <?php echo (!empty($salary_err)) ? 'is-invalid' : ''; ?>"
+                               value="<?php echo $salary; ?>">
+                        <span class="invalid-feedback"><?php echo $salary_err; ?></span>
                     </div>
                     <input type="submit" class="btn btn-primary" value="Submit">
                     <a href="index.php" class="btn btn-secondary ml-2">Cancel</a>
@@ -113,5 +118,6 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         </div>
     </div>
 </div>
+<script src="js/bootstrap.bundle.js"></script>
 </body>
 </html>

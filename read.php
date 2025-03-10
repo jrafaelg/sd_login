@@ -1,8 +1,8 @@
 <?php
-if ( !isset( $_SESSION ) ) session_start();
+if (!isset($_SESSION)) session_start();
 
 // Check if the user is logged in, if not then redirect him to login page
-if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
+if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
     header("location: login.php");
     exit;
 }
@@ -54,7 +54,7 @@ if (isset($_GET["id"]) && !empty(trim($_GET["id"]))) {
     <title>View Record</title>
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <style>
-        .wrapper{
+        .wrapper {
             width: 600px;
             margin: 0 auto;
         }
@@ -83,5 +83,6 @@ if (isset($_GET["id"]) && !empty(trim($_GET["id"]))) {
         </div>
     </div>
 </div>
+<script src="js/bootstrap.bundle.js"></script>
 </body>
 </html>

@@ -98,5 +98,6 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
         </div>
     </div>
 </div>
+<script src="js/bootstrap.bundle.js"></script>
 </body>
 </html>

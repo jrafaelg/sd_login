@@ -1,0 +1,6 @@
+{
+    "require": {
+        "spomky-labs/otphp": "^11.3",
+        "pragmarx/google2fa": "^8.0"
+    }
+}
