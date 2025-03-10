@@ -16,8 +16,6 @@ $username = $password = "";
 $username_err = $password_err = $login_err = "";
 
 // Processing form data when form is submitted
-//if ($_SERVER["REQUEST_METHOD"] == "POST") {
-//if ($_SERVER["REQUEST_METHOD"] == "POST") {
 if (!empty($_POST)) {
 
     // Check if username is empty
@@ -34,7 +32,7 @@ if (!empty($_POST)) {
         $password = trim($_POST["password"]);
     }
 
-// Validate credentials
+    // Validate credentials
     if (empty($username_err) && empty($password_err)) {
         // Prepare a select statement
         $sql = "SELECT id, username, password FROM users WHERE username = :username";
@@ -61,7 +59,9 @@ if (!empty($_POST)) {
                 $_SESSION["username"] = $username;
 
                 // Redirect user to welcome page
-                header("location: index.php");
+                //header("location: index.php");
+                header("location: checkotp.php");
+
                 exit();
             } else {
                 $login_err = "Invalid username or password.";
