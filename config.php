@@ -41,7 +41,7 @@ function connectToDatabase()
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     username TEXT NOT NULL UNIQUE,
                     password TEXT NOT NULL,
-                    otp_secret TEXT NOT NULL,
+                    otp_secret TEXT DEFAULT NULL,
                     otp_ts INTEGER DEFAULT NULL,
                     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
                 );";

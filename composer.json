@@ -1,6 +1,7 @@
 {
     "require": {
         "spomky-labs/otphp": "^11.3",
-        "pragmarx/google2fa": "^8.0"
+        "pragmarx/google2fa": "^8.0",
+        "chillerlan/php-qrcode": "^5.0"
     }
 }

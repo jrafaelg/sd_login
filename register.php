@@ -72,7 +72,8 @@ if (!empty($_POST)) {
         if ($stmt = $link->prepare($sql)) {
             // Set parameters
             $param_username = $username;
-            $param_password = $password;
+            // encrypt password
+            $param_password = password_hash($password, PASSWORD_DEFAULT);
 
             // Bind variables to the prepared statement as parameters
             $stmt->bindValue(":username", $param_username, SQLITE3_TEXT);
@@ -81,7 +82,12 @@ if (!empty($_POST)) {
             // Attempt to execute the prepared statement
             if ($stmt->execute()) {
                 // Redirect to login page
-                header("location: login.php");
+                //header("location: login.php");
+                // gravando o id do usuário na session
+                $_SESSION["id"] = $link->lastInsertRowID();
+
+                header("location: registerotp.php");
+
                 exit();
             } else {
                 echo "Oops! Something went wrong. Please try again later.";
