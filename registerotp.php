@@ -68,6 +68,13 @@ if ($row = $result->fetchArray(SQLITE3_ASSOC)) {
 
     $qrcode_url = (new QRCode)->render($qrCodeUrl);
 
+    $recovery_codes = [];
+    for ($i = 0; $i < 8; $i++) {
+        $randon = random_int(1000, 99999999);
+
+        $recovery_codes[$i] = sprintf("%'.08d", $randon);
+    }
+
 } else {
     header("location: error.php");
     exit;
@@ -103,6 +110,21 @@ $link->close();
     <h2>Sign Up</h2>
     <p>Código OTP: <?php echo $otp_secret; ?></p>
     <p><img src="<?php echo $qrcode_url ?>" alt=""></p>
+
+    <?php
+    if (!empty($recovery_codes)) {
+        ?>
+        <p>códigos de recuperação: </p>
+
+
+        <?php
+        for ($i = 0; $i < count($recovery_codes); $i++) {
+            echo "<p>" . $recovery_codes[$i] . "</p>";
+        }
+        ?>
+        <?php
+    }
+    ?>
 
 </div>
 <script src="js/bootstrap.bundle.js"></script>
