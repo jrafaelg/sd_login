@@ -68,7 +68,6 @@ if ($stmt->execute()) {
     );
 
 
-
     // gerando a url que direciona para o qrcode
     $qrcode_url = (new QRCode)->render($qrCodeUrl);
 
@@ -79,36 +78,45 @@ if ($stmt->execute()) {
     $stmt = $link->prepare($sql);
 
     // SQLite3 uses different binding method
-    $stmt->bindValue(':id', $user_id, SQLITE3_INTEGER);
+    $stmt->bindValue(':id', $user_id, PDO::PARAM_INT);
 
     $recovery_codes = [];
 
-    $link->beginTransaction();
-    $link->commit();
-
     if ($stmt->execute()) {
 
-        $rows = $stmt->rowCount();
+        // convertendo o resultado para um array
+        $result = $stmt->fetchAll();
 
-//        print_r($rows);
-//        exit();
+        // contando para ver quantos retornaram
+        $rows = count($result);
 
-        // verficar se retornou algum resultado
+        // verficar se retornou algum item
         if ($rows > 0) {
-            while ($row = $stmt->fetch()) {
+
+            foreach ($result as $row) {
                 $recovery_codes[] = $row["backup_code"];
             }
+
         } else {
 
+            // inciando a transaction para otimizar os inserts
             $link->beginTransaction();
+
+            // for para 8 códigos de recuperação
             for ($i = 0; $i < 8; $i++) {
+
+                // gerando um randômico de 1000 até 99999999 para evitar
+                // de ser um número muito pequeno
                 $randon = random_int(1000, 99999999);
+
+                // formatando o número para preencher com zeros à esquerda
                 $recovery_codes[$i] = sprintf("%'.08d", $randon);
 
                 // Prepare an insert statement
                 $sql = "INSERT INTO backupcodes (cod_user, backup_code) VALUES (:cod_user, :backupcode)";
 
                 $stmt = $link->prepare($sql);
+
                 // Set parameters
                 $cod_user = $user_id;
                 $backupcode = $recovery_codes[$i];
@@ -119,7 +127,9 @@ if ($stmt->execute()) {
 
                 // Attempt to execute the prepared statement
                 if (!$stmt->execute()) {
-                    print_r($stmt);
+                    //print_r($stmt);
+                    $link->rollBack();
+                    header("location: error.php");
                     exit();
                 }
             }

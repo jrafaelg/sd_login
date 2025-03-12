@@ -3,6 +3,12 @@ error_reporting(E_ALL);
 ini_set('display_errors', TRUE);
 if (!isset($_SESSION)) session_start();
 
+function dump($var)
+{
+    var_dump($var);
+    exit();
+}
+
 function connectToDatabase()
 {
 
@@ -75,9 +81,8 @@ function connectToDatabase()
         if ($stmt = $link->prepare($sql)) {
             // Set parameters
             $param_username = 'jrafaelg';
-            $param_password = '123';
+            $param_password = password_hash('123', PASSWORD_DEFAULT);
             $param_otp_secret = 'NNQXZMEVASLTH26P';
-
 
             // Bind variables to the prepared statement as parameters
             $stmt->bindValue(":username", $param_username, PDO::PARAM_STR);

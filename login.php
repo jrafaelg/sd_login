@@ -51,7 +51,7 @@ if (!empty($_POST)) {
             $id = $row["id"];
             $hashed_password = $row["password"];
 
-            if ($password == $hashed_password) {
+            if (password_verify($password, $hashed_password)) {
 
                 // Store data in session variables
                 $_SESSION["loggedin"] = true;
