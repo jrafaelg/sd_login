@@ -25,14 +25,14 @@ $sql = "SELECT otp_secret FROM users WHERE id = :id";
 $stmt = $link->prepare($sql);
 
 // SQLite3 uses different binding method
-$stmt->bindValue(':id', $user_id, SQLITE3_INTEGER);
+$stmt->bindValue(':id', $user_id, PDO::PARAM_INT);
 
 // Execute the prepared statement
-$result = $stmt->execute();
+$stmt->execute();
 
-// Use fetchArray() on the result, not on the statement
-if ($row = $result->fetchArray(SQLITE3_ASSOC)) {
+if ($stmt->execute()) {
 
+    $row = $stmt->fetch();
     $otp_secret = $row["otp_secret"];
 
     $google2fa = new Google2FA();
@@ -60,19 +60,75 @@ if ($row = $result->fetchArray(SQLITE3_ASSOC)) {
         }
     }
 
+    // gerando os dados para o qrcode
     $qrCodeUrl = $google2fa->getQRCodeUrl(
         'Company Name',
         'company@email.com',
         $otp_secret
     );
 
+
+
+    // gerando a url que direciona para o qrcode
     $qrcode_url = (new QRCode)->render($qrCodeUrl);
 
-    $recovery_codes = [];
-    for ($i = 0; $i < 8; $i++) {
-        $randon = random_int(1000, 99999999);
+    // pesquisar no banco os códigos de backup que o usuário já possa ter gerado
+    $sql = "SELECT backup_code FROM backupcodes WHERE cod_user = :id AND used = 0";
 
-        $recovery_codes[$i] = sprintf("%'.08d", $randon);
+    // For SQLite3, use a different parameter binding approach
+    $stmt = $link->prepare($sql);
+
+    // SQLite3 uses different binding method
+    $stmt->bindValue(':id', $user_id, SQLITE3_INTEGER);
+
+    $recovery_codes = [];
+
+    $link->beginTransaction();
+    $link->commit();
+
+    if ($stmt->execute()) {
+
+        $rows = $stmt->rowCount();
+
+//        print_r($rows);
+//        exit();
+
+        // verficar se retornou algum resultado
+        if ($rows > 0) {
+            while ($row = $stmt->fetch()) {
+                $recovery_codes[] = $row["backup_code"];
+            }
+        } else {
+
+            $link->beginTransaction();
+            for ($i = 0; $i < 8; $i++) {
+                $randon = random_int(1000, 99999999);
+                $recovery_codes[$i] = sprintf("%'.08d", $randon);
+
+                // Prepare an insert statement
+                $sql = "INSERT INTO backupcodes (cod_user, backup_code) VALUES (:cod_user, :backupcode)";
+
+                $stmt = $link->prepare($sql);
+                // Set parameters
+                $cod_user = $user_id;
+                $backupcode = $recovery_codes[$i];
+
+                // Bind variables to the prepared statement as parameters
+                $stmt->bindValue(":cod_user", $cod_user, PDO::PARAM_STR);
+                $stmt->bindValue(":backupcode", $backupcode, PDO::PARAM_STR);
+
+                // Attempt to execute the prepared statement
+                if (!$stmt->execute()) {
+                    print_r($stmt);
+                    exit();
+                }
+            }
+            $link->commit();
+        }
+
+    } else {
+        header("location: error.php");
+        exit;
     }
 
 } else {
@@ -80,12 +136,11 @@ if ($row = $result->fetchArray(SQLITE3_ASSOC)) {
     exit;
 }
 
-
 // Close statement
-$stmt->close();
+unset($stmt);
 
 // Close connection
-$link->close();
+unset($link);
 
 ?>
 <!DOCTYPE html>
@@ -127,7 +182,9 @@ $link->close();
     ?>
 
 </div>
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
 <script src="js/bootstrap.bundle.js"></script>
-
+<script src="js/bootstrap.min.js"></script>
 </body>
 </html>

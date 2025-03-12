@@ -41,13 +41,13 @@ if (!empty($_POST)) {
         $stmt = $link->prepare($sql);
 
         // SQLite3 uses different binding method
-        $stmt->bindValue(':username', $username, SQLITE3_TEXT);
+        $stmt->bindValue(':username', $username, PDO::PARAM_STR);
 
         // Execute the prepared statement
-        $result = $stmt->execute();
+        if ($stmt->execute()) {
 
-        // Use fetchArray() on the result, not on the statement
-        if ($row = $result->fetchArray(SQLITE3_ASSOC)) {
+            $row = $stmt->fetch();
+
             $id = $row["id"];
             $hashed_password = $row["password"];
 
@@ -72,10 +72,10 @@ if (!empty($_POST)) {
         }
 
         // Close statement
-        $stmt->close();
+        unset($stmt);
 
         // Close connection
-        $link->close();
+        unset($link);
 
     }
 
@@ -129,6 +129,9 @@ if (!empty($_POST)) {
         <p>Don't have an account? <a href="register.php">Sign up now</a>.</p>
     </form>
 </div>
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
 <script src="js/bootstrap.bundle.js"></script>
+<script src="js/bootstrap.min.js"></script>
 </body>
 </html>

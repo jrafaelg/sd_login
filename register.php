@@ -20,19 +20,20 @@ if (!empty($_POST)) {
     } else {
         // Prepare a select statement
         $sql = "SELECT id FROM users WHERE username = :username";
+        $sql = "SELECT COUNT(*) FROM users WHERE username = :username";
 
-        if ($stmt = $link->prepare("SELECT COUNT(*) FROM users WHERE username = :username")) {
+        if ($stmt = $link->prepare($sql)) {
             // Set parameters
             $param_username = trim($_POST["username"]);
 
             // Bind variables to the prepared statement as parameters
-            $stmt->bindValue(":username", $param_username, SQLITE3_TEXT);
+            $stmt->bindValue(":username", $param_username, PDO::PARAM_STR);
 
             // Attempt to execute the prepared statement
-            $result = $stmt->execute();
+            $stmt->execute();
 
             // Fetch the result
-            if ($row = $result->fetchArray(SQLITE3_NUM)) {
+            if ($row = $stmt->fetch()) {
                 if ($row[0] > 0) {  // Check if username exists
                     $username_err = "This username is already taken.";
                 } else {
@@ -41,9 +42,6 @@ if (!empty($_POST)) {
             } else {
                 echo "Oops! Something went wrong. Please try again later.";
             }
-
-            // Close statement
-            $stmt->close();
         }
     }
 
@@ -69,33 +67,33 @@ if (!empty($_POST)) {
         // Prepare an insert statement
         $sql = "INSERT INTO users (username, password) VALUES (:username, :password)";
 
-        if ($stmt = $link->prepare($sql)) {
-            // Set parameters
-            $param_username = $username;
-            // encrypt password
-            $param_password = password_hash($password, PASSWORD_DEFAULT);
+        $stmt = $link->prepare($sql);
+        // Set parameters
+        $param_username = $username;
+        // encrypt password
+        $param_password = password_hash($password, PASSWORD_DEFAULT);
 
-            // Bind variables to the prepared statement as parameters
-            $stmt->bindValue(":username", $param_username, SQLITE3_TEXT);
-            $stmt->bindValue(":password", $param_password, SQLITE3_TEXT);
+        // Bind variables to the prepared statement as parameters
+        $stmt->bindValue(":username", $param_username, SQLITE3_TEXT);
+        $stmt->bindValue(":password", $param_password, SQLITE3_TEXT);
 
-            // Attempt to execute the prepared statement
-            if ($stmt->execute()) {
-                // Redirect to login page
-                //header("location: login.php");
-                // gravando o id do usuário na session
-                $_SESSION["id"] = $link->lastInsertRowID();
+        // Attempt to execute the prepared statement
+        if ($stmt->execute()) {
+            // Redirect to login page
+            //header("location: login.php");
+            // gravando o id do usuário na session
+            $_SESSION["id"] = $link->lastInsertId();
 
-                header("location: registerotp.php");
+            header("location: registerotp.php");
 
-                exit();
-            } else {
-                echo "Oops! Something went wrong. Please try again later.";
-            }
-
-            // Close statement
-            unset($stmt);
+            exit();
+        } else {
+            echo "Oops! Something went wrong. Please try again later.";
         }
+
+        // Close statement
+        unset($stmt);
+
     }
 
     // Close connection
@@ -152,7 +150,9 @@ if (!empty($_POST)) {
         <p>Already have an account? <a href="login.php">Login here</a>.</p>
     </form>
 </div>
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
 <script src="js/bootstrap.bundle.js"></script>
-
+<script src="js/bootstrap.min.js"></script>
 </body>
 </html>

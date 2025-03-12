@@ -16,9 +16,7 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
     <title>Dashboard</title>
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
+
     <style>
         .wrapper {
             width: 600px;
@@ -53,7 +51,7 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
                 $result = $link->query($sql);
 
                 if ($result) {
-                    if ($result->numColumns() > 0) { // Check if there are results
+                    //if ($result->rowCount() > 0) { // Check if there are results
                         echo '<table class="table table-bordered table-striped">';
                         echo "<thead>";
                         echo "<tr>";
@@ -65,7 +63,10 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
                         echo "</tr>";
                         echo "</thead>";
                         echo "<tbody>";
-                        while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
+//                    print_r($result);
+//                    exit();
+                        while ($row = $result->fetch()) {
+
                             echo "<tr>";
                             echo "<td>" . htmlspecialchars($row['id']) . "</td>";
                             echo "<td>" . htmlspecialchars($row['name']) . "</td>";
@@ -80,11 +81,11 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
                         }
                         echo "</tbody>";
                         echo "</table>";
-                    } else {
-                        echo '<div class="alert alert-danger"><em>No records were found.</em></div>';
-                    }
+                    //} else {
+                        //echo '<div class="alert alert-danger"><em>No records were found.</em></div>';
+                    //}
                 } else {
-                    echo "ERROR: Could not execute query: $sql. " . $link->lastErrorMsg();
+                    echo "ERROR: Could not execute query: $sql. " . $link->errorInfo();
                 }
                 ?>
             </div>
@@ -98,6 +99,9 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
         </div>
     </div>
 </div>
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
 <script src="js/bootstrap.bundle.js"></script>
+<script src="js/bootstrap.min.js"></script>
 </body>
 </html>

@@ -5,10 +5,17 @@ if (!isset($_SESSION)) session_start();
 
 function connectToDatabase()
 {
+
+    //$dsn = ':memory:';
+    //$pdo = new \PDO($dsn);
+
     $db_file = 'empregados.db';
 
+    $dsn = "sqlite:$db_file";
+    $link = new PDO($dsn);
+
     // Attempt to connect to SQLite database
-    $link = new SQLite3($db_file);
+    //$link = new SQLite3($db_file);
 
     // Create the employees table if it does not exist
     $ddl = "
@@ -19,8 +26,21 @@ function connectToDatabase()
         salary INTEGER NOT NULL
     );";
 
-    if (!$link->exec($ddl)) {
+    if (!$link->query($ddl)) {
         die("ERROR: Could not create table employees.");
+    }
+
+    // Create the backupcodes table if it does not exist
+    $ddl = "
+    CREATE TABLE IF NOT EXISTS backupcodes (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        cod_user INTEGER NOT NULL,
+        backup_code TEXT NOT NULL,
+        used INTEGER DEFAULT 0 NOT NULL
+    );";
+
+    if (!$link->query($ddl)) {
+        die("ERROR: Could not create table backupcodes.");
     }
 
 
@@ -31,7 +51,7 @@ function connectToDatabase()
         die("ERROR: Could not check table users.");
     }
 
-    $row = $result->fetchArray(SQLITE3_ASSOC);
+    $row = $result->fetch();
 
     if ($row['total'] != 1) {
 
@@ -46,7 +66,7 @@ function connectToDatabase()
                     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
                 );";
 
-        if (!$link->exec($ddl)) {
+        if (!$link->query($ddl)) {
             die("ERROR: Could not create table users.");
         }
 
@@ -60,9 +80,9 @@ function connectToDatabase()
 
 
             // Bind variables to the prepared statement as parameters
-            $stmt->bindValue(":username", $param_username, SQLITE3_TEXT);
-            $stmt->bindValue(":password", $param_password, SQLITE3_TEXT);
-            $stmt->bindValue(":otp_secret", $param_otp_secret, SQLITE3_TEXT);
+            $stmt->bindValue(":username", $param_username, PDO::PARAM_STR);
+            $stmt->bindValue(":password", $param_password, PDO::PARAM_STR);
+            $stmt->bindValue(":otp_secret", $param_otp_secret, PDO::PARAM_STR);
 
             // Attempt to execute the prepared statement
             if (!$stmt->execute()) {

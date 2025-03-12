@@ -43,13 +43,12 @@ if (!empty($_POST)) {
         $stmt = $link->prepare($sql);
 
         // SQLite3 uses different binding method
-        $stmt->bindValue(':id', $user_id, SQLITE3_TEXT);
-
-        // Execute the prepared statement
-        $result = $stmt->execute();
+        $stmt->bindValue(':id', $user_id, PDO::PARAM_INT);
 
         // Use fetchArray() on the result, not on the statement
-        if ($row = $result->fetchArray(SQLITE3_ASSOC)) {
+        if ($stmt->execute()) {
+
+            $row = $stmt->fetch();
 
             $otp_secret = $row["otp_secret"];
             $otp_ts = $row["otp_ts"];
@@ -94,12 +93,11 @@ if (!empty($_POST)) {
             $login_err = "código OTP incorreto.";
         }
 
-
         // Close statement
-        $stmt->close();
+        unset($stmt);
 
         // Close connection
-        $link->close();
+        unset($link);
     }
 
 }
@@ -145,6 +143,9 @@ if (!empty($_POST)) {
         </div>
     </form>
 </div>
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
 <script src="js/bootstrap.bundle.js"></script>
+<script src="js/bootstrap.min.js"></script>
 </body>
 </html>
