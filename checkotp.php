@@ -2,14 +2,11 @@
 // Initialize the session
 if (!isset($_SESSION)) session_start();
 
-// Check if the user is already logged in, if yes then redirect him to welcome page
-if (!isset($_SESSION["loggedin"]) or $_SESSION["loggedin"] === false) {
-    header("location: login.php");
-    exit;
-}
+const _DEFVAR = 1;
 
 // Include config file
 require_once "config.php";
+checkLongIn();
 
 include 'vendor\autoload.php';
 
@@ -71,12 +68,13 @@ if (!empty($_POST)) {
 
                     if ($stmt = $link->prepare($sql)) {
                         // Bind variables to the prepared statement as parameters
-                        $stmt->bindValue(':otp_ts', $timestamp, SQLITE3_INTEGER);
-                        $stmt->bindValue(':id', $user_id, SQLITE3_INTEGER);
+                        $stmt->bindValue(':otp_ts', $timestamp, PDO::PARAM_INT);
+                        $stmt->bindValue(':id', $user_id, PDO::PARAM_INT);
 
                         // Attempt to execute the prepared statement
                         if ($stmt->execute()) {
                             // Records updated successfully. Redirect to landing page
+                            $_SESSION['otp'] = true;
                             header("location: index.php");
                             exit();
                         } else {
@@ -130,6 +128,7 @@ if (!empty($_POST)) {
                     // Attempt to execute the prepared statement
                     if ($stmt->execute()) {
                         //dump($stmt);
+                        $_SESSION['otp'] = true;
                         // Records updated successfully. Redirect to landing page
                         header("location: index.php");
                         exit();
@@ -157,13 +156,11 @@ if (!empty($_POST)) {
 
     }//if (empty($otp_err)) {
 
-    // Close statement
-    unset($stmt);
-
-    // Close connection
-    unset($link);
-
 }
+
+// destruindo as variáveis do bando de dados
+disconnectDataBase();
+
 ?>
 <!DOCTYPE html>
 <html lang="en">

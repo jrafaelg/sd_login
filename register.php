@@ -1,15 +1,19 @@
 <?php
 if (!isset($_SESSION)) session_start();
 
+const _DEFVAR = 1;
+
 // Include config file
 require_once "config.php";
+
+include 'helper\PasswordValidator.php';
+
 
 // Define variables and initialize with empty values
 $username = $password = $confirm_password = "";
 $username_err = $password_err = $confirm_password_err = "";
 
 // Processing form data when form is submitted
-//if ($_SERVER["REQUEST_METHOD"] == "POST") {
 if (!empty($_POST)) {
 
     // Validate username
@@ -22,15 +26,15 @@ if (!empty($_POST)) {
         $sql = "SELECT id FROM users WHERE username = :username";
         $sql = "SELECT COUNT(*) FROM users WHERE username = :username";
 
-        if ($stmt = $link->prepare($sql)) {
-            // Set parameters
-            $param_username = trim($_POST["username"]);
+        $stmt = $link->prepare($sql);
 
-            // Bind variables to the prepared statement as parameters
-            $stmt->bindValue(":username", $param_username, PDO::PARAM_STR);
+        // Set parameters
+        $param_username = trim($_POST["username"]);
 
-            // Attempt to execute the prepared statement
-            $stmt->execute();
+        // Bind variables to the prepared statement as parameters
+        $stmt->bindValue(":username", $param_username, PDO::PARAM_STR);
+
+        if ($stmt->execute()) {
 
             // Fetch the result
             if ($row = $stmt->fetch()) {
@@ -52,6 +56,13 @@ if (!empty($_POST)) {
         $password = trim($_POST["password"]);
     }
 
+    // check password strength
+    $passValidator = new PasswordStrengthValidator($password, 8);
+
+    if (!$passValidator->isValid()) {
+        $password_err = $passValidator->getErrorMessage();
+    }
+
     // Validate confirm password
     if (empty(trim($_POST["confirm_password"]))) {
         $confirm_password_err = "Please confirm password.";
@@ -68,37 +79,35 @@ if (!empty($_POST)) {
         $sql = "INSERT INTO users (username, password) VALUES (:username, :password)";
 
         $stmt = $link->prepare($sql);
+
         // Set parameters
         $param_username = $username;
         // encrypt password
         $param_password = password_hash($password, PASSWORD_DEFAULT);
 
         // Bind variables to the prepared statement as parameters
-        $stmt->bindValue(":username", $param_username, SQLITE3_TEXT);
-        $stmt->bindValue(":password", $param_password, SQLITE3_TEXT);
+        $stmt->bindValue(":username", $param_username, PDO::PARAM_STR);
+        $stmt->bindValue(":password", $param_password, PDO::PARAM_STR);
 
         // Attempt to execute the prepared statement
         if ($stmt->execute()) {
-            // Redirect to login page
-            //header("location: login.php");
             // gravando o id do usuário na session
             $_SESSION["id"] = $link->lastInsertId();
 
+            // Redirect to login page
             header("location: registerotp.php");
-
             exit();
         } else {
             echo "Oops! Something went wrong. Please try again later.";
         }
-
-        // Close statement
-        unset($stmt);
-
     }
 
-    // Close connection
-    unset($pdo);
+
 }
+
+// destruindo as variáveis do bando de dados
+disconnectDataBase();
+
 ?>
 <!DOCTYPE html>
 <html lang="en">

@@ -2,11 +2,13 @@
 
 if (!isset($_SESSION)) session_start();
 
-// Check if the user is logged in, if not then redirect him to login page
-if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
-    header("location: login.php");
-    exit;
-}
+// definindo variável para impedir acesso direto ao arquivo config.php
+const _DEFVAR = 1;
+
+// Include config file
+require_once "config.php";
+checkLongIn();
+checkOTP();
 
 ?>
 <!DOCTYPE html>
@@ -43,15 +45,17 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
                     <a href="create.php" class="btn btn-success pull-right"><i class="fa fa-plus"></i> Add New Employee</a>
                 </div>
                 <?php
-                // Include config file
-                require_once "config.php";
+
 
                 // Attempt select query execution
                 $sql = "SELECT * FROM employees";
                 $result = $link->query($sql);
 
                 if ($result) {
-                    //if ($result->rowCount() > 0) { // Check if there are results
+
+                    $rows = $result->fetchAll();
+
+                    if (count($rows) > 0) { // Check if there are results
                         echo '<table class="table table-bordered table-striped">';
                         echo "<thead>";
                         echo "<tr>";
@@ -63,9 +67,8 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
                         echo "</tr>";
                         echo "</thead>";
                         echo "<tbody>";
-//                    print_r($result);
-//                    exit();
-                        while ($row = $result->fetch()) {
+
+                        foreach ($rows as $row) {
 
                             echo "<tr>";
                             echo "<td>" . htmlspecialchars($row['id']) . "</td>";
@@ -81,12 +84,14 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
                         }
                         echo "</tbody>";
                         echo "</table>";
-                    //} else {
-                        //echo '<div class="alert alert-danger"><em>No records were found.</em></div>';
-                    //}
+                    } else {
+                        echo '<div class="alert alert-info"><em>No records were found.</em></div>';
+                    }
                 } else {
-                    echo "ERROR: Could not execute query: $sql. " . $link->errorInfo();
+                    echo "ERROR: Could not execute query: $sql. " . var_dump($link->errorInfo());
                 }
+                // destruindo as variáveis do bando de dados
+                disconnectDataBase();
                 ?>
             </div>
         </div>

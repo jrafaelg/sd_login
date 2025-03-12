@@ -2,6 +2,9 @@
 // Initialize the session
 if (!isset($_SESSION)) session_start();
 
+// definindo variável para impedir acesso direto ao arquivo config.php
+const _DEFVAR = 1;
+
 // Check if the user is already logged in, if yes then redirect him to welcome page
 if (isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true) {
     header("location: index.php");
@@ -71,15 +74,12 @@ if (!empty($_POST)) {
             $login_err = "Invalid username or password.";
         }
 
-        // Close statement
-        unset($stmt);
-
-        // Close connection
-        unset($link);
-
     }
 
 }
+
+// destruindo as variáveis do bando de dados
+disconnectDataBase();
 ?>
 <!DOCTYPE html>
 <html lang="en">

@@ -2,14 +2,13 @@
 // Initialize the session
 if (!isset($_SESSION)) session_start();
 
-// Check if the user is logged in, if not then redirect him to login page
-if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
-    header("location: login.php");
-    exit;
-}
+// definindo variável para impedir acesso direto ao arquivo config.php
+const _DEFVAR = 1;
 
 // Include config file
 require_once "config.php";
+checkLongIn();
+checkOTP();
 
 // Define variables and initialize with empty values
 $name = $address = $salary = "";
@@ -64,10 +63,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
         }
 
-        // Close statement (optional, but good practice)
-        $stmt->close();
+
     }
+
 }
+
+// destruindo as variáveis do bando de dados
+disconnectDataBase();
+
 ?>
 
 <!DOCTYPE html>

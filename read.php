@@ -1,51 +1,51 @@
 <?php
 if (!isset($_SESSION)) session_start();
 
-// Check if the user is logged in, if not then redirect him to login page
-if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
-    header("location: login.php");
-    exit;
-}
+const _DEFVAR = 1;
+
+// Include config file
+require_once "config.php";
+checkLongIn();
+checkOTP();
+
+$error = "";
 
 // Check existence of id parameter before processing further
 if (isset($_GET["id"]) && !empty(trim($_GET["id"]))) {
-    // Include config file
-    require_once "config.php";
 
     // Prepare a select statement
     $sql = "SELECT * FROM employees WHERE id = :id";
+    $stmt = $link->prepare($sql);
+    // Bind parameter
+    $stmt->bindValue(':id', trim($_GET["id"]), PDO::PARAM_INT);
 
-    if ($stmt = $link->prepare($sql)) {
-        // Bind parameter
-        $stmt->bindValue(':id', trim($_GET["id"]), SQLITE3_INTEGER);
+    if ($stmt->execute()) {
 
         // Attempt to execute the prepared statement
-        $result = $stmt->execute();
+        $row = $stmt->fetch();
 
-        if ($row = $result->fetchArray(SQLITE3_ASSOC)) {
-            // Retrieve individual field values
+        //dump($row);
+
+        if ($row) {
             $name = $row["name"];
             $address = $row["address"];
             $salary = $row["salary"];
         } else {
-            // URL doesn't contain a valid id parameter. Redirect to error page
-            header("location: error.php");
-            exit();
+            $error = "registro não encontrado";
         }
+
     } else {
-        echo "Oops! Something went wrong. Please try again later.";
+        $error = "Oops! Algo deu errado. Tente novamente mais tarde.";
     }
 
-    // Close statement
-    $stmt->close();
-
-    // Close connection (optional, SQLite auto-closes on script termination)
-    $link->close();
 } else {
     // URL doesn't contain id parameter. Redirect to error page
     header("location: error.php");
     exit();
 }
+
+// destruindo as variáveis do bando de dados
+disconnectDataBase();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -65,20 +65,24 @@ if (isset($_GET["id"]) && !empty(trim($_GET["id"]))) {
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-12">
-                <h1 class="mt-5 mb-3">View Record</h1>
-                <div class="form-group">
-                    <label>Name</label>
-                    <p><b><?php echo $name; ?></b></p>
-                </div>
-                <div class="form-group">
-                    <label>Address</label>
-                    <p><b><?php echo $address; ?></b></p>
-                </div>
-                <div class="form-group">
-                    <label>Salary</label>
-                    <p><b><?php echo $salary; ?></b></p>
-                </div>
-                <p><a href="index.php" class="btn btn-primary">Back</a></p>
+                <h1 class="mt-5 mb-3">Ver registro</h1>
+                <?php if (!empty($error)) { ?>
+                    <div class="alert alert-info"><em><?php echo $error ?></em></div>
+                <?php } else { ?>
+                    <div class="form-group">
+                        <label>Name</label>
+                        <p><b><?php echo $name; ?></b></p>
+                    </div>
+                    <div class="form-group">
+                        <label>Address</label>
+                        <p><b><?php echo $address; ?></b></p>
+                    </div>
+                    <div class="form-group">
+                        <label>Salary</label>
+                        <p><b><?php echo $salary; ?></b></p>
+                    </div>
+                <?php } ?>
+                <p><a href="index.php" class="btn btn-primary">Voltar</a></p>
             </div>
         </div>
     </div>

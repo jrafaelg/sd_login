@@ -1,19 +1,62 @@
 <?php
+
+use JetBrains\PhpStorm\NoReturn;
+
+// In the include files (where direct access isn't permitted):
+defined('_DEFVAR') or exit('Restricted Access');
+
 error_reporting(E_ALL);
 ini_set('display_errors', TRUE);
+
 if (!isset($_SESSION)) session_start();
 
-function dump($var)
+#[NoReturn] function dump($var): void
 {
     var_dump($var);
     exit();
 }
 
+function checkLongIn(): void
+{
+    //dump(__);
+    // Check if the user is logged in, if not then redirect him to login page
+    if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
+        // Destroy the session.
+        session_destroy();
+        // Redirect to login page
+        header("location: logout.php");
+        exit;
+    }
+}
+
+function checkOTP(): void
+{
+    if (!isset($_SESSION)) session_start();
+
+    if (empty($_SESSION["otp"])) {
+        // Destroy the session.
+        session_destroy();
+        // Redirect to login page
+        header("location: logout.php");
+        exit;
+    }
+}
+
+function disconnectDataBase(): void
+{
+    // destruindo as variáveis
+    unset($dsn);
+    unset($result);
+    unset($row);
+    unset($rows);
+    unset($ddl);
+    unset($sql);
+    unset($stmt);
+    unset($link);
+}
+
 function connectToDatabase()
 {
-
-    //$dsn = ':memory:';
-    //$pdo = new \PDO($dsn);
 
     $db_file = 'empregados.db';
 
@@ -95,9 +138,17 @@ function connectToDatabase()
             }
         }
 
-        // Close statement
-        unset($stmt);
     }
+
+    // destruindo as variáveis
+    unset($dsn);
+    unset($result);
+    unset($row);
+    unset($ddl);
+    unset($sql);
+
+    // Close statement
+    unset($stmt);
 
     return $link;
 }

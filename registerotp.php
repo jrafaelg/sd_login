@@ -1,6 +1,8 @@
 <?php
 if (!isset($_SESSION)) session_start();
 
+const _DEFVAR = 1;
+
 // Include config file
 require_once "config.php";
 
@@ -46,18 +48,18 @@ if ($stmt->execute()) {
         // atualizar o banco para registrar o novo otp_secret
         $sql = "UPDATE users SET otp_secret = :otp_secret WHERE id = :id";
 
-        if ($stmt = $link->prepare($sql)) {
-            // Bind variables to the prepared statement as parameters
-            $stmt->bindValue(':otp_secret', $otp_secret, SQLITE3_TEXT);
-            $stmt->bindValue(':id', $user_id, SQLITE3_INTEGER);
+        $stmt = $link->prepare($sql);
+        // Bind variables to the prepared statement as parameters
+        $stmt->bindValue(':otp_secret', $otp_secret, PDO::PARAM_STR);
+        $stmt->bindValue(':id', $user_id, PDO::PARAM_INT);
 
-            // Attempt to execute the prepared statement
-            if (!$stmt->execute()) {
-                // não conseguiu atualizar
-                header("location: error.php");
-                exit;
-            }
+        // Attempt to execute the prepared statement
+        if (!$stmt->execute()) {
+            // não conseguiu atualizar
+            header("location: error.php");
+            exit;
         }
+
     }
 
     // gerando os dados para o qrcode
@@ -146,12 +148,7 @@ if ($stmt->execute()) {
     exit;
 }
 
-// Close statement
-unset($stmt);
-
-// Close connection
-unset($link);
-
+disconnectDataBase();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -159,37 +156,35 @@ unset($link);
     <meta charset="UTF-8">
     <title>Sign Up</title>
     <link rel="stylesheet" href="css/bootstrap.min.css">
-    <style>
-        body {
-            font: 14px sans-serif;
-        }
-
-        .wrapper {
-            width: 360px;
-            padding: 20px;
-        }
-    </style>
 </head>
 <body>
 <div class="wrapper">
-    <h2>Sign Up</h2>
-    <p>Código OTP: <?php echo $otp_secret; ?></p>
-    <p><img src="<?php echo $qrcode_url ?>" alt=""></p>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="mt-5 mb-3 clearfix text-center">
+                    <h2>Chave OTP e códigos de recuperação</h2>
+                    <p>Utilize seu aplicativo autenciador</p>
+                    <p>Chave OTP: <?php echo $otp_secret; ?></p>
+                    <p><img src="<?php echo $qrcode_url ?>" alt="" height="200px"></p>
 
-    <?php
-    if (!empty($recovery_codes)) {
-        ?>
-        <p>códigos de recuperação: </p>
-
-
-        <?php
-        for ($i = 0; $i < count($recovery_codes); $i++) {
-            echo "<p>" . $recovery_codes[$i] . "</p>";
-        }
-        ?>
-        <?php
-    }
-    ?>
+                    <?php if (!empty($recovery_codes)) { ?>
+                        <h3>Anote os códigos de recuperação abaixo. Eles não serão exibidos novamente!</h3>
+                        <?php
+                        for ($i = 0; $i < count($recovery_codes); $i++) {
+                            echo "<p>" . $recovery_codes[$i] . "</p>";
+                        }
+                        ?>
+                        <?php
+                    }
+                    ?>
+                    <p>
+                        <a href="login.php" class="btn btn-primary">Ir para login</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
 
 </div>
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
