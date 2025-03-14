@@ -19,7 +19,6 @@ $username = $password = "";
 $username_err = $password_err = $login_err = "";
 
 
-
 // Processing form data when form is submitted
 if (!empty($_POST)) {
 
@@ -49,16 +48,17 @@ if (!empty($_POST)) {
         // SQLite3 uses different binding method
         $stmt->bindValue(':username', $username, PDO::PARAM_STR);
 
-        dump($stmt->fetch());
 
         // Execute the prepared statement
-        if ($stmt->fetch()) {
+        if ($stmt->execute()) {
 
             $row = $stmt->fetch();
 
+            //dump($row);
+            //extract($stmt->fetch(), EXTR_OVERWRITE);
+            //$id = !empty($id) ? $id : 0;
 
-
-            $id = $row["id"];
+            $id = !empty($row["id"]) ? $row["id"] : 0;
             $hashed_password = $row["password"];
 
             if (password_verify($password, $hashed_password)) {
@@ -71,8 +71,8 @@ if (!empty($_POST)) {
                 // Redirect user to welcome page
                 //header("location: index.php");
                 header("location: checkotp.php");
-
                 exit();
+
             } else {
                 $login_err = "Invalid username or password.";
             }
@@ -152,7 +152,9 @@ disconnectDataBase();
                             </div>
                         </div>
                         <div class="col-12">
-                            <p class="m-0 text-secondary text-center">Don't have an account? <a href="register.php" class="link-primary text-decoration-none">Click here</a></p>
+                            <p class="m-0 text-secondary text-center">Don't have an account? <a href="register.php"
+                                                                                                class="link-primary text-decoration-none">Click
+                                    here</a></p>
                         </div>
                     </div>
                 </form>
@@ -161,10 +163,6 @@ disconnectDataBase();
         </div>
     </div>
 </div>
-
-
-
-
 
 
 <!--<div class="wrapper">-->
@@ -183,23 +181,26 @@ disconnectDataBase();
 //                    }
 //                    ?>
 <!---->
-<!--                    <form class="form-container" action="--><?php //echo htmlspecialchars($_SERVER["PHP_SELF"]); ?><!--" method="post">-->
+<!--                    <form class="form-container" action="-->
+<?php //echo htmlspecialchars($_SERVER["PHP_SELF"]); ?><!--" method="post">-->
 <!--                        <div class="form-group mb-3 text-left">-->
 <!--                            <label class="text-left !important">Username</label>-->
 <!--                            <input type="text" name="username"-->
-<!--                                   class="form-control --><?php //echo (!empty($username_err)) ? 'is-invalid' : ''; ?><!--"-->
+<!--                                   class="form-control -->
+<?php //echo (!empty($username_err)) ? 'is-invalid' : ''; ?><!--"-->
 <!--                                   value="--><?php //echo $username; ?><!--">-->
 <!--                            <span class="invalid-feedback">--><?php //echo $username_err; ?><!--</span>-->
 <!--                        </div>-->
 <!--                        <div class="form-group mb-3">-->
 <!--                            <label>Password</label>-->
 <!--                            <input type="password" name="password"-->
-<!--                                   class="form-control --><?php //echo (!empty($password_err)) ? 'is-invalid' : ''; ?><!--">-->
+<!--                                   class="form-control -->
+<?php //echo (!empty($password_err)) ? 'is-invalid' : ''; ?><!--">-->
 <!--                            <span class="invalid-feedback">--><?php //echo $password_err; ?><!--</span>-->
 <!--                        </div>-->
 <!--                        <div class="form-group mb-3 text-center">-->
 <!--                        </div>-->
-<!--                        <!---->
+<!--                        <!-- -->
 <!--                        <div class="col-12">-->
 <!--                            <div class="d-flex gap-2 justify-content-between">-->
 <!--                                <div class="form-check">-->
@@ -211,7 +212,7 @@ disconnectDataBase();
 <!--                                <a href="#!" class="link-primary text-decoration-none">Forgot password?</a>-->
 <!--                            </div>-->
 <!--                        </div>-->
-<!--                        -->-->
+<!--                        --> -->
 <!--                        <div class="d-grid my-3">-->
 <!--                            <button type="submit" class="btn btn-primary d-grid">Sign in</button>-->
 <!--                        </div>-->

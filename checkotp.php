@@ -168,41 +168,50 @@ disconnectDataBase();
     <meta charset="UTF-8">
     <title>Login</title>
     <link rel="stylesheet" href="css/bootstrap.min.css">
-    <style>
-        body {
-            font: 14px sans-serif;
-        }
-
-        .wrapper {
-            width: 360px;
-            padding: 20px;
-        }
-    </style>
 </head>
 <body>
-<div class="wrapper">
-    <h2>Login</h2>
-    <p>Please fill in your credentials to login.</p>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5 col-xxl-4">
+            <div class="card-body p-3 p-md-4 p-xl-5">
 
-    <?php
-    if (!empty($otp_err)) {
-        echo '<div class="alert alert-danger">' . $otp_err . '</div>';
-    }
-    ?>
+                <div class="text-center mb-3">
+                    <h2 class="fw-normal text-center  mb-4">Sign in</h2>
+                    <p class="text-secondary">Check your OTP key to login.</p>
+                </div>
 
-    <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
-        <div class="form-group">
-            <label>Código OTP</label>
-            <input type="text" name="otp_key"
-                   class="form-control <?php echo (!empty($otp_err)) ? 'is-invalid' : ''; ?>"
-                   value="<?php echo $otp_key; ?>">
-            <span class="invalid-feedback"><?php echo $otp_err; ?></span>
+                <?php
+                if (!empty($otp_err)) {
+                    echo '<div class="alert alert-danger">' . $otp_err . '</div>';
+                }
+                ?>
+
+                <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
+                    <div class="row gy-2 overflow-hidden">
+                        <div class="col-12">
+                            <div class="form-floating mb-3">
+                                <input type="text" name="otp_key" id="otp_key" placeholder="otp_key"
+                                       class="form-control <?php echo (!empty($otp_err)) ? 'is-invalid' : ''; ?>"
+                                       value="<?php echo $otp_key; ?>" required>
+                                <label for="otp_key" class="form-label">OTP key</label>
+                                <span class="invalid-feedback"><?php echo $otp_err; ?></span>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="d-grid my-3">
+                                <button class="btn btn-primary btn-lg" type="submit">Check</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </form>
+
+            </div>
         </div>
-        <div class="form-group">
-            <input type="submit" class="btn btn-primary" value="Login">
-        </div>
-    </form>
+    </div>
 </div>
+
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
 <script src="js/bootstrap.bundle.js"></script>
