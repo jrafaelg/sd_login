@@ -115,50 +115,64 @@ disconnectDataBase();
     <meta charset="UTF-8">
     <title>Sign Up</title>
     <link rel="stylesheet" href="css/bootstrap.min.css">
-    <style>
-        body {
-            font: 14px sans-serif;
-        }
-
-        .wrapper {
-            width: 360px;
-            padding: 20px;
-        }
-    </style>
 </head>
 <body>
-<div class="wrapper">
-    <h2>Sign Up</h2>
-    <p>Please fill this form to create an account.</p>
-    <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
-        <div class="form-group">
-            <label>Username</label>
-            <input type="text" name="username"
-                   class="form-control <?php echo (!empty($username_err)) ? 'is-invalid' : ''; ?>"
-                   value="<?php echo $username; ?>">
-            <span class="invalid-feedback"><?php echo $username_err; ?></span>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5 col-xxl-4">
+            <div class="card-body p-3 p-md-4 p-xl-5">
+
+                <div class="text-center mb-3">
+                    <h2 class="fw-normal text-center  mb-4">Sign up</h2>
+                    <p class="text-secondary">Please fill this form to create an account.</p>
+                </div>
+
+                <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
+                    <div class="row gy-2 overflow-hidden">
+                        <div class="col-12">
+                            <div class="form-floating mb-3">
+                                <input type="text" name="username" id="username" placeholder="Username"
+                                       class="form-control <?php echo (!empty($username_err)) ? 'is-invalid' : ''; ?>"
+                                       value="<?php echo $username; ?>" required>
+                                <label for="username" class="form-label">Username</label>
+                                <span class="invalid-feedback"><?php echo $username_err; ?></span>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-floating mb-3">
+                                <input type="password" name="password" id="password" placeholder="Password"
+                                       class="form-control <?php echo (!empty($password_err)) ? 'is-invalid' : ''; ?>"
+                                       value="<?php echo $password; ?>" required>
+                                <span class="invalid-feedback"><?php echo $password_err; ?></span>
+                                <label for="password" class="form-label">Password</label>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-floating mb-3">
+                                <input type="password" name="confirm_password" id="confirm_password" placeholder="Password"
+                                       class="form-control <?php echo (!empty($confirm_password_err)) ? 'is-invalid' : ''; ?>"
+                                       value="<?php echo $confirm_password; ?>" required>
+                                <span class="invalid-feedback"><?php echo $confirm_password_err; ?></span>
+                                <label for="confirm_password" class="form-label">Confirm Password</label>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="d-grid my-3">
+                                <button class="btn btn-primary btn-lg" type="submit">Log in</button>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <p class="m-0 text-secondary text-center">Already have an account? <a href="login.php" class="link-primary text-decoration-none">Click here</a></p>
+                        </div>
+                    </div>
+                </form>
+            </div>
         </div>
-        <div class="form-group">
-            <label>Password</label>
-            <input type="password" name="password"
-                   class="form-control <?php echo (!empty($password_err)) ? 'is-invalid' : ''; ?>"
-                   value="<?php echo $password; ?>">
-            <span class="invalid-feedback"><?php echo $password_err; ?></span>
-        </div>
-        <div class="form-group">
-            <label>Confirm Password</label>
-            <input type="password" name="confirm_password"
-                   class="form-control <?php echo (!empty($confirm_password_err)) ? 'is-invalid' : ''; ?>"
-                   value="<?php echo $confirm_password; ?>">
-            <span class="invalid-feedback"><?php echo $confirm_password_err; ?></span>
-        </div>
-        <div class="form-group">
-            <input type="submit" class="btn btn-primary" value="Submit">
-            <input type="reset" class="btn btn-secondary ml-2" value="Reset">
-        </div>
-        <p>Already have an account? <a href="login.php">Login here</a>.</p>
-    </form>
+    </div>
 </div>
+
+
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
 <script src="js/bootstrap.bundle.js"></script>
