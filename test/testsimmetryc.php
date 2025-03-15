@@ -1,13 +1,13 @@
 <?php
 include '..\vendor\autoload.php';
 
-$key = random_bytes(32); // generate a random key
+$key = random_bytes(16); // generate a random key
 $iv = random_bytes(16); // generate a random IV
 echo $iv;
 echo "\n";
 
 $message = "Hello world!"; // the data to encrypt
-$cipher = "AES-256-CBC"; // the algorithm and mode
+$cipher = "AES-128-ECB"; // the algorithm and mode
 
 $encrypted = openssl_encrypt($message, $cipher, $key, 0, $iv); // encrypt the data
 echo $encrypted;
