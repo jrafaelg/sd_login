@@ -22,18 +22,18 @@ $username_err = $password_err = $login_err = "";
 // Processing form data when form is submitted
 if (!empty($_POST)) {
 
+    $username = !empty($_POST["username"]) ? trim($_POST["username"]) : '';
+
     // Check if username is empty
-    if (empty(trim($_POST["username"]))) {
+    if (empty($username)) {
         $username_err = "Please enter username.";
-    } else {
-        $username = trim($_POST["username"]);
     }
 
+    $password = !empty($_POST["password"]) ? trim($_POST["password"]) : '';
+
     // Check if password is empty
-    if (empty(trim($_POST["password"]))) {
+    if (empty($password)) {
         $password_err = "Please enter your password.";
-    } else {
-        $password = trim($_POST["password"]);
     }
 
     // Validate credentials
@@ -78,6 +78,7 @@ if (!empty($_POST)) {
                 } else {
                     $login_err = "Invalid username or password.";
                 }
+
             } else {
                 $login_err = "Invalid username or password.";
             }

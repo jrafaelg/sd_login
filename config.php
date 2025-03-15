@@ -72,7 +72,9 @@ function connectToDatabase()
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
         address TEXT NOT NULL,
-        salary INTEGER NOT NULL
+        salary INTEGER NOT NULL,
+        cod_user INTEGER NOT NULL,
+        digital_sign TEXT NOT NULL                                         
     );";
 
     if (!$link->query($ddl)) {
@@ -112,6 +114,8 @@ function connectToDatabase()
                     password TEXT NOT NULL,
                     otp_secret TEXT DEFAULT NULL,
                     otp_ts INTEGER DEFAULT NULL,
+                    private_key TEXT NOT NULL,
+                    public_key TEXT NOT NULL,
                     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
                 );";
 

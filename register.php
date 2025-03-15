@@ -9,16 +9,19 @@ require_once "config.php";
 include 'helper\PasswordStrengthValidatorHelper.php';
 
 // Define variables and initialize with empty values
-$username = $password = $confirm_password = "";
-$username_err = $password_err = $confirm_password_err = "";
+$username = $password = $confirm_password = $password_sign = $confirm_password_sign = "";
+$username_err = $password_err = $confirm_password_err = $password_sign_err = $confirm_password_sign_err = "";
+$error = "";
 
 // Processing form data when form is submitted
 if (!empty($_POST)) {
 
+    $username = !empty($_POST["username"]) ? trim($_POST["username"]) : "";
+
     // Validate username
-    if (empty(trim($_POST["username"]))) {
+    if (empty($username)) {
         $username_err = "Please enter a username.";
-    } elseif (!preg_match('/^[a-zA-Z0-9_]+$/', trim($_POST["username"]))) {
+    } elseif (!preg_match('/^[a-zA-Z0-9_]+$/', $username)) {
         $username_err = "Username can only contain letters, numbers, and underscores.";
     } else {
         // Prepare a select statement
@@ -27,11 +30,8 @@ if (!empty($_POST)) {
 
         $stmt = $link->prepare($sql);
 
-        // Set parameters
-        $param_username = trim($_POST["username"]);
-
         // Bind variables to the prepared statement as parameters
-        $stmt->bindValue(":username", $param_username, PDO::PARAM_STR);
+        $stmt->bindValue(":username", $username, PDO::PARAM_STR);
 
         if ($stmt->execute()) {
 
@@ -39,20 +39,18 @@ if (!empty($_POST)) {
             if ($row = $stmt->fetch()) {
                 if ($row[0] > 0) {  // Check if username exists
                     $username_err = "This username is already taken.";
-                } else {
-                    $username = trim($_POST["username"]);
                 }
             } else {
-                echo "Oops! Something went wrong. Please try again later.";
+                $error = "Oops! Something went wrong. Please try again.";
             }
         }
     }
 
+    $password = !empty($_POST["password"]) ? trim($_POST["password"]) : "";
+
     // Validate password
-    if (empty(trim($_POST["password"]))) {
+    if (empty($password)) {
         $password_err = "Please enter a password.";
-    } else {
-        $password = trim($_POST["password"]);
     }
 
     // check password strength
@@ -62,11 +60,12 @@ if (!empty($_POST)) {
         $password_err = $passValidator->getErrorMessage();
     }
 
+    $confirm_password = !empty($_POST["confirm_password"]) ? trim($_POST["confirm_password"]) : "";
+
     // Validate confirm password
-    if (empty(trim($_POST["confirm_password"]))) {
+    if (empty($confrim_password)) {
         $confirm_password_err = "Please confirm password.";
     } else {
-        $confirm_password = trim($_POST["confirm_password"]);
         if (empty($password_err) && ($password != $confirm_password)) {
             $confirm_password_err = "Password did not match.";
         }
@@ -74,6 +73,8 @@ if (!empty($_POST)) {
 
     // Check input errors before inserting into database
     if (empty($username_err) && empty($password_err) && empty($confirm_password_err)) {
+
+
         // Prepare an insert statement
         $sql = "INSERT INTO users (username, password) VALUES (:username, :password)";
 
@@ -97,7 +98,7 @@ if (!empty($_POST)) {
             header("location: registerotp.php");
             exit();
         } else {
-            echo "Oops! Something went wrong. Please try again later.";
+            $error = "Oops! Something went wrong. Please try again.";
         }
     }
 
@@ -126,6 +127,12 @@ disconnectDataBase();
                     <h2 class="fw-normal text-center  mb-4">Sign up</h2>
                     <p class="text-secondary">Please fill this form to create an account.</p>
                 </div>
+
+                <?php
+                if (!empty($error)) {
+                    echo '<div class="alert alert-danger">' . $error . '</div>';
+                }
+                ?>
 
                 <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
                     <div class="row gy-2 overflow-hidden">
@@ -158,14 +165,36 @@ disconnectDataBase();
                             </div>
                         </div>
                         <div class="col-12">
+                            <div class="form-floating mb-3">
+                                <input type="password" name="password_sign" id="password_sign"
+                                       placeholder="Password Sing"
+                                       class="form-control <?php echo (!empty($password_sign_err)) ? 'is-invalid' : ''; ?>"
+                                       value="<?php echo $password_sign; ?>" required>
+                                <span class="invalid-feedback"><?php echo $password_sign_err; ?></span>
+                                <label for="password_sign" class="form-label">Signature password</label>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-floating mb-3">
+                                <input type="password" name="confirm_password_sign" id="confirm_password_sign"
+                                       placeholder="Confirm Password Sing"
+                                       class="form-control <?php echo (!empty($confirm_password_sign_err)) ? 'is-invalid' : ''; ?>"
+                                       value="<?php echo $confirm_password_sign; ?>" required>
+                                <span class="invalid-feedback"><?php echo $confirm_password_sign_err; ?></span>
+                                <label for="confirm_password_sign" class="form-label">Confirm signature
+                                    password </label>
+                            </div>
+                        </div>
+                        <div class="col-12">
                             <div class="d-grid my-3">
                                 <button class="btn btn-primary btn-lg" type="submit">Create</button>
                             </div>
                         </div>
                         <div class="col-12">
-                            <p class="m-0 text-secondary text-center">Already have an account? <a href="login.php"
-                                                                                                  class="link-primary text-decoration-none">Click
-                                    here</a></p>
+                            <p class="m-0 text-secondary text-center">
+                                Already have an account? <a href="login.php" class="link-primary text-decoration-none">Click
+                                    here</a>
+                            </p>
                         </div>
                     </div>
                 </form>

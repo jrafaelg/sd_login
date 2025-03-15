@@ -53,6 +53,7 @@ class PasswordStrengthValidatorHelper
     }
 
     /**
+     * Check password strength
      * @return bool
      */
     public function isValid(): bool
@@ -85,6 +86,10 @@ class PasswordStrengthValidatorHelper
         return true;
     }
 
+    /**
+     * Return the error message
+     * @return string
+     */
     public function getErrorMessage(): string
     {
         return $this->errorMessage;
