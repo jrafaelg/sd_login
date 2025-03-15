@@ -54,28 +54,34 @@ if (!empty($_POST)) {
 
             $row = $stmt->fetch();
 
-            //dump($row);
-            //extract($stmt->fetch(), EXTR_OVERWRITE);
-            //$id = !empty($id) ? $id : 0;
+            if ($row) { // Check if there are results
 
-            $id = !empty($row["id"]) ? $row["id"] : 0;
-            $hashed_password = $row["password"];
+                //dump($row);
+                //extract($stmt->fetch(), EXTR_OVERWRITE);
+                //$id = !empty($id) ? $id : 0;
 
-            if (password_verify($password, $hashed_password)) {
+                $id = !empty($row["id"]) ? $row["id"] : 0;
+                $hashed_password = $row["password"];
 
-                // Store data in session variables
-                $_SESSION["loggedin"] = true;
-                $_SESSION["id"] = $id;
-                $_SESSION["username"] = $username;
+                if (password_verify($password, $hashed_password)) {
 
-                // Redirect user to welcome page
-                //header("location: index.php");
-                header("location: checkotp.php");
-                exit();
+                    // Store data in session variables
+                    $_SESSION["loggedin"] = true;
+                    $_SESSION["id"] = $id;
+                    $_SESSION["username"] = $username;
 
+                    // Redirect user to welcome page
+                    //header("location: index.php");
+                    header("location: checkotp.php");
+                    exit();
+
+                } else {
+                    $login_err = "Invalid username or password.";
+                }
             } else {
                 $login_err = "Invalid username or password.";
             }
+
         } else {
             // Username doesn't exist
             $login_err = "Invalid username or password.";

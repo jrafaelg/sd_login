@@ -45,12 +45,16 @@ if ($stmt->execute()) {
         // gerando um otp_secret
         $otp_secret = $google2fa->generateSecretKey();
 
+        // gerando o primeiro timestamp para impedir de usar o código duas vezes
+        $ts = $google2fa->getTimestamp();
+
         // atualizar o banco para registrar o novo otp_secret
-        $sql = "UPDATE users SET otp_secret = :otp_secret WHERE id = :id";
+        $sql = "UPDATE users SET otp_secret = :otp_secret, otp_ts = :ts WHERE id = :id";
 
         $stmt = $link->prepare($sql);
         // Bind variables to the prepared statement as parameters
         $stmt->bindValue(':otp_secret', $otp_secret, PDO::PARAM_STR);
+        $stmt->bindValue(':ts', $ts, PDO::PARAM_INT);
         $stmt->bindValue(':id', $user_id, PDO::PARAM_INT);
 
         // Attempt to execute the prepared statement
