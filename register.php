@@ -6,8 +6,7 @@ const _DEFVAR = 1;
 // Include config file
 require_once "config.php";
 
-include 'helper\PasswordValidator.php';
-
+include 'helper\PasswordStrengthValidatorHelper.php';
 
 // Define variables and initialize with empty values
 $username = $password = $confirm_password = "";
@@ -57,7 +56,7 @@ if (!empty($_POST)) {
     }
 
     // check password strength
-    $passValidator = new PasswordStrengthValidator($password, 8);
+    $passValidator = new PasswordStrengthValidatorHelper($password, 8);
 
     if (!$passValidator->isValid()) {
         $password_err = $passValidator->getErrorMessage();
@@ -150,7 +149,8 @@ disconnectDataBase();
                         </div>
                         <div class="col-12">
                             <div class="form-floating mb-3">
-                                <input type="password" name="confirm_password" id="confirm_password" placeholder="Password"
+                                <input type="password" name="confirm_password" id="confirm_password"
+                                       placeholder="Password"
                                        class="form-control <?php echo (!empty($confirm_password_err)) ? 'is-invalid' : ''; ?>"
                                        value="<?php echo $confirm_password; ?>" required>
                                 <span class="invalid-feedback"><?php echo $confirm_password_err; ?></span>
@@ -163,7 +163,9 @@ disconnectDataBase();
                             </div>
                         </div>
                         <div class="col-12">
-                            <p class="m-0 text-secondary text-center">Already have an account? <a href="login.php" class="link-primary text-decoration-none">Click here</a></p>
+                            <p class="m-0 text-secondary text-center">Already have an account? <a href="login.php"
+                                                                                                  class="link-primary text-decoration-none">Click
+                                    here</a></p>
                         </div>
                     </div>
                 </form>

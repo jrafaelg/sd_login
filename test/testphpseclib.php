@@ -14,10 +14,11 @@ $password = 123;
 //echo $private;
 //echo "\n";
 //echo $private->withPassword($password . 'a');
-//exit();
+//echo "\n";
 //$public = $private->getPublicKey();
+//exit();
 
-$pkey = '
+$privkey = '
 -----BEGIN PRIVATE KEY-----
 MIIBVQIBADANBgkqhkiG9w0BAQEFAASCAT8wggE7AgEAAkEAtwrX9FX5lHw5nz9j
 b1qLaE7TmSWwxub7Hx3VwLaMry6EX4pPECKfZkqyRiTqaYlMGsk/1TCDTQPqC91a
@@ -45,11 +46,15 @@ YFe5IohHyX5BZ53O/vlbgvERAMClP5aNZ54dW6p5Ph+pa+WLj44GvMZL3tNGMPjF
 -----END ENCRYPTED PRIVATE KEY-----
 ';
 
-$key = PublicKeyLoader::load($pekey, $password . 'a');
+$key = PublicKeyLoader::load($privkey);
+
+$public = $key->getPublicKey();
 
 //$private = RSA::load($pekey, '123');
 
 echo $key;
+echo "\n";
+echo $public;
 exit();
 
 

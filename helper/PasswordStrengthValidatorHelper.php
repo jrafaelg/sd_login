@@ -1,6 +1,10 @@
 <?php
 
-class PasswordStrengthValidator
+/**
+ * @author Darko Todorić
+ * @url https://github.com/darkotodoric/password-strength-validator
+ */
+class PasswordStrengthValidatorHelper
 {
     /** @var string */
     private string $password;
