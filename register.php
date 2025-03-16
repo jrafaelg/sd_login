@@ -6,7 +6,11 @@ const _DEFVAR = 1;
 // Include config file
 require_once "config.php";
 
-include 'helper\PasswordStrengthValidatorHelper.php';
+include $_SERVER['DOCUMENT_ROOT'] . '/vendor/autoload.php';
+
+use \helper\PasswordStrengthValidatorHelper;
+use \phpseclib3\Crypt\RSA;
+use \helper\CipherHelper;
 
 // Define variables and initialize with empty values
 $username = $password = $confirm_password = $password_sign = $confirm_password_sign = "";
@@ -63,7 +67,7 @@ if (!empty($_POST)) {
     $confirm_password = !empty($_POST["confirm_password"]) ? trim($_POST["confirm_password"]) : "";
 
     // Validate confirm password
-    if (empty($confrim_password)) {
+    if (empty($confirm_password)) {
         $confirm_password_err = "Please confirm password.";
     } else {
         if (empty($password_err) && ($password != $confirm_password)) {
@@ -71,23 +75,66 @@ if (!empty($_POST)) {
         }
     }
 
-    // Check input errors before inserting into database
-    if (empty($username_err) && empty($password_err) && empty($confirm_password_err)) {
+    $password_sign = !empty($_POST["password_sign"]) ? trim($_POST["password_sign"]) : "";
 
+    // Validate password
+    if (empty($password_sign)) {
+        $password_sign_err = "Please enter a signature password.";
+    }
+
+    // check password strength
+    $passSignValidator = new PasswordStrengthValidatorHelper(
+        $password_sign,
+        6,
+        false,
+        false,
+        false,
+        false);
+
+    if (!$passSignValidator->isValid()) {
+        $password_sign_err = $passSignValidator->getErrorMessage();
+    }
+
+    $confirm_password_sign = !empty($_POST["confirm_password_sign"]) ? trim($_POST["confirm_password_sign"]) : "";
+
+    // Validate confirm password
+    if (empty($confirm_password_sign)) {
+        $confirm_password_sign_err = "Please confirm signature password.";
+    } else {
+        if (empty($password_sign_err) && ($password_sign != $confirm_password_sign)) {
+            $confirm_password_sign_err = "Password did not match.";
+        }
+    }
+
+
+    // Check input errors before inserting into database
+    if (empty($username_err)
+        && empty($password_err)
+        && empty($confirm_password_err)
+        && empty($password_sign_err)
+        && empty($confirm_password_sign_err)) {
+
+        // gerando as chaves
+        $private_key = RSA::createKey(2048);
+        $public_key = $private_key->getPublicKey();
+
+        // encriptando a chave privada com a senha de assinatura
+        $cipher = new CipherHelper();
+        $ciphedPrivateKey = $cipher->encrypt($private_key, $password_sign);
 
         // Prepare an insert statement
-        $sql = "INSERT INTO users (username, password) VALUES (:username, :password)";
+        $sql = "INSERT INTO users (username, password, private_key, public_key) VALUES (:username, :password,  :private_key, :public_key)";
 
         $stmt = $link->prepare($sql);
 
-        // Set parameters
-        $param_username = $username;
         // encrypt password
-        $param_password = password_hash($password, PASSWORD_DEFAULT);
+        $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
         // Bind variables to the prepared statement as parameters
-        $stmt->bindValue(":username", $param_username, PDO::PARAM_STR);
-        $stmt->bindValue(":password", $param_password, PDO::PARAM_STR);
+        $stmt->bindValue(":username", $username, PDO::PARAM_STR);
+        $stmt->bindValue(":password", $hashed_password, PDO::PARAM_STR);
+        $stmt->bindValue(":private_key", $ciphedPrivateKey, PDO::PARAM_STR);
+        $stmt->bindValue(":public_key", $public_key, PDO::PARAM_STR);
 
         // Attempt to execute the prepared statement
         if ($stmt->execute()) {

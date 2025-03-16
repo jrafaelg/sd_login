@@ -4,6 +4,9 @@
  * @author Darko Todorić
  * @url https://github.com/darkotodoric/password-strength-validator
  */
+
+namespace helper;
+
 class PasswordStrengthValidatorHelper
 {
     /** @var string */

@@ -4,6 +4,9 @@
  * @author Juan Domenick Fernandes <juandomenick12@gmail.com>
  * Funções de encriptação e desincriptação
  */
+
+namespace helper;
+
 class CipherHelper
 {
     /**

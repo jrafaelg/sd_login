@@ -114,8 +114,8 @@ function connectToDatabase()
                     password TEXT NOT NULL,
                     otp_secret TEXT DEFAULT NULL,
                     otp_ts INTEGER DEFAULT NULL,
-                    private_key TEXT NOT NULL,
-                    public_key TEXT NOT NULL,
+                    private_key TEXT DEFAULT NULL,
+                    public_key TEXT DEFAULT NULL,
                     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
                 );";
 

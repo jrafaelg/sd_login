@@ -4,10 +4,22 @@ include '..\vendor\autoload.php';
 
 use \phpseclib3\Crypt\RSA;
 
-include '..\helper\CipherHelper.php';
+//include '..\helper\CipherHelper.php';
 
-$private = RSA::createKey(512);
+use \helper\CipherHelper;
+
+$private = RSA::createKey(1024);
+
 $public = $private->getPublicKey();
+$sing = $private->sign('teste');
+echo $private;
+echo "\n---\n";
+//echo $private->toString('PKCS8');
+//echo "\n---\n";
+echo $sing;
+//echo "\n---\n";
+//$public->verify('teste', $private->toString('PKCS8'));
+exit();
 echo 'chave privada';
 echo "\n";
 echo $private;
