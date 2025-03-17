@@ -17,8 +17,8 @@ use \helper\CipherHelper;
 
 
 // Define variables and initialize with empty values
-$name = $address = $salary = "";
-$name_err = $address_err = $salary_err = "";
+$name = $address = $salary = $password_sign = "";
+//$name_err = $address_err = $salary_err = $password_sign_err = "";
 $error = [];
 
 // Processing form data when form is submitted
@@ -53,44 +53,47 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $password_sign = !empty($_POST["password_sign"]) ? $_POST["password_sign"] : "";
 
     if (empty($password_sign)) {
-        $error['password_sign_err'] = "Password is required";
+        $error['password_sign_err'] = "Password signature is required";
     }
 
-
-    $id_user = $_SESSION["id"];
-
-    // Prepare a select statement
-    $sql = "SELECT private_key, public_key FROM users WHERE id = :id_user";
-
-
-    $stmt = $link->prepare($sql);
-
-    // Bind variables to the prepared statement as parameters
-    $stmt->bindValue(":id_user", $id_user, PDO::PARAM_INT);
-
-    if ($stmt->execute()) {
-
-        // Fetch the result
-        if ($row = $stmt->fetch()) {
-            if (empty($row['private_key'])) {  // Check private key
-                $error['msg'] = "Invalid private key.";
-            }
-        } else {
-            $error['msg'] = "Oops! Something went wrong. Please try again.";
-        }
-    }
-
-    $deciphed_private_key = '';
 
     if (empty($error)) {
+        $id_user = $_SESSION["id"];
 
-        $cipher = new CipherHelper();
+        // Prepare a select statement
+        $sql = "SELECT private_key, public_key FROM users WHERE id = :id_user";
 
-        // tentando decriptografar a chave privada
-        $deciphed_private_key = $cipher->decrypt($row['private_key'], $password_sign);
 
-        if (empty($deciphed_private_key)) {
-            $error['msg'] = "Invalid password sign.";
+        $stmt = $link->prepare($sql);
+
+        // Bind variables to the prepared statement as parameters
+        $stmt->bindValue(":id_user", $id_user, PDO::PARAM_INT);
+
+        if ($stmt->execute()) {
+
+            // Fetch the result
+            if ($row = $stmt->fetch()) {
+                if (empty($row['private_key'])) {  // Check private key
+                    $error['msg'] = "Invalid private key.";
+                }
+            } else {
+                $error['msg'] = "Oops! Something went wrong. Please try again.";
+            }
+        }
+
+        $deciphed_private_key = '';
+
+        if (empty($error)) {
+
+
+            $cipher = new CipherHelper();
+
+            // tentando decriptografar a chave privada
+            $deciphed_private_key = $cipher->decrypt($row['private_key'], $password_sign);
+
+            if (empty($deciphed_private_key)) {
+                $error['msg'] = "Invalid password sign.";
+            }
         }
     }
 
@@ -128,7 +131,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         } else {
             echo "Oops! Something went wrong. Please try again later.";
         }
-        
+
     } else {
         $error['msg'] = "Oops! Something went wrong. Please try again.";
     }
@@ -139,7 +142,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 disconnectDataBase();
 
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -206,17 +208,18 @@ disconnectDataBase();
                                 <input type="password" name="password_sign" id="password_sign" required
                                        placeholder="Password Sign"
                                        class="form-control <?php echo (!empty($error['password_sign_err'])) ? 'is-invalid' : ''; ?>"
-                                       value="<?php echo $salary; ?>">
+                                       value="<?php echo $password_sign; ?>">
                                 <span class="invalid-feedback"><?php echo !empty($error['password_sign_err']); ?></span>
                                 <label for="password_sign">Password Sign</label>
                             </div>
                         </div>
 
-                        <div class="col-12">
-                            <div class="d-grid my-3">
-                                <input type="submit" class="btn btn-primary" value="Submit">
-                                <a href="index.php" class="btn btn-secondary ml-2">Cancel</a>
-                            </div>
+                        <div class="d-flex gap-5 justify-content-center">
+                            <button type="submit"
+                                    class="btn btn-primary btn-block w-100">
+                                Submit
+                            </button>
+                            <a href="index.php" class="btn btn-block btn-secondary w-100">Cancel</a>
                         </div>
 
                     </div>

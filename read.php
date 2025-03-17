@@ -133,7 +133,7 @@ disconnectDataBase();
                     </div>
 
                     <div class="form-group">
-                        <label>Digital signature</label>
+                        <label>Digital signature:</label>
                         <p class="fw-bold  <?php echo $digital_sign == "valid signature" ? 'text-success' : 'text-danger' ?>">
                             <?php echo $digital_sign; ?>
                         </p>
