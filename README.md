@@ -15,3 +15,7 @@ Também foi utilizado uma biblioteca para assinatura digital dos registros e ver
 - phpseclib/phpseclib - biblioteca para os recursos de assinatura digital
 - CipherHelper - Helper para cifragem/decifragem de dados
 - PasswordStrengthValidatorHelper - Helper para verificação de complexidade de senha
+
+
+> [!WARNING]
+> - Desenvolvido em PHP 8.1.
