@@ -36,69 +36,86 @@ checkOTP();
     </script>
 </head>
 <body>
-<div class="wrapper">
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="mt-5 mb-3 clearfix">
-                    <h2 class="pull-left">Employees Details</h2>
-                    <a href="create.php" class="btn btn-success pull-right"><i class="fa fa-plus"></i> Add New Employee</a>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-12 col-sm-10">
+            <div class="card-body p-5 p-md-4 p-xl-12">
+
+                <div class="text-center mb-3">
+                    <h2 class="fw-normal text-center  mb-4">Employees Details</h2>
+
                 </div>
-                <?php
+                <div class="row">
+                    <div class="d-flex justify-content-center">
+                        <a href="create.php" class="btn btn-success pull-right ">
+                            <i class="fa fa-plus"></i> Add New Employee
+                        </a>
+                    </div>
+
+                </div>
+
+                <div class="row justify-content-center mt-4">
+                    <div class="col-12 col-sm-10">
 
 
-                // Attempt select query execution
-                $sql = "SELECT * FROM employees";
-                $result = $link->query($sql);
+                        <?php
 
-                if ($result) {
 
-                    $rows = $result->fetchAll();
+                        // Attempt select query execution
+                        $sql = "SELECT * FROM employees";
+                        $result = $link->query($sql);
 
-                    if (count($rows) > 0) { // Check if there are results
-                        echo '<table class="table table-bordered table-striped">';
-                        echo "<thead>";
-                        echo "<tr>";
-                        echo "<th>#</th>";
-                        echo "<th>Name</th>";
-                        echo "<th>Address</th>";
-                        echo "<th>Salary</th>";
-                        echo "<th>Action</th>";
-                        echo "</tr>";
-                        echo "</thead>";
-                        echo "<tbody>";
+                        if ($result) {
 
-                        foreach ($rows as $row) {
+                            $rows = $result->fetchAll();
 
-                            echo "<tr>";
-                            echo "<td>" . htmlspecialchars($row['id']) . "</td>";
-                            echo "<td>" . htmlspecialchars($row['name']) . "</td>";
-                            echo "<td>" . htmlspecialchars($row['address']) . "</td>";
-                            echo "<td>" . htmlspecialchars($row['salary']) . "</td>";
-                            echo "<td>";
-                            echo '<a href="read.php?id=' . $row['id'] . '" class="mr-3" title="View Record" data-toggle="tooltip"><span class="fa fa-eye"></span></a>';
-                            echo '<a href="update.php?id=' . $row['id'] . '" class="mr-3" title="Update Record" data-toggle="tooltip"><span class="fa fa-pencil"></span></a>';
-                            echo '<a href="delete.php?id=' . $row['id'] . '" title="Delete Record" data-toggle="tooltip"><span class="fa fa-trash"></span></a>';
-                            echo "</td>";
-                            echo "</tr>";
+                            if (count($rows) > 0) { // Check if there are results
+                                echo '<table class="table table-bordered table-striped">';
+                                echo "<thead>";
+                                echo "<tr>";
+                                echo "<th>#</th>";
+                                echo "<th>Name</th>";
+                                echo "<th>Address</th>";
+                                echo "<th>Salary</th>";
+                                echo "<th>Action</th>";
+                                echo "</tr>";
+                                echo "</thead>";
+                                echo "<tbody>";
+
+                                foreach ($rows as $row) {
+
+                                    echo "<tr>";
+                                    echo "<td>" . htmlspecialchars($row['id']) . "</td>";
+                                    echo "<td>" . htmlspecialchars($row['name']) . "</td>";
+                                    echo "<td>" . htmlspecialchars($row['address']) . "</td>";
+                                    echo "<td>" . htmlspecialchars($row['salary']) . "</td>";
+                                    echo "<td>";
+                                    echo '<a href="read.php?id=' . $row['id'] . '" class="me-2" title="View Record" data-toggle="tooltip"><span class="fa fa-eye"></span></a>';
+                                    echo '<a href="update.php?id=' . $row['id'] . '" class="me-2" title="Update Record" data-toggle="tooltip"><span class="fa fa-pencil"></span></a>';
+                                    echo '<a href="delete.php?id=' . $row['id'] . '" class="me-2" title="Delete Record" data-toggle="tooltip"><span class="fa fa-trash"></span></a>';
+                                    echo "</td>";
+                                    echo "</tr>";
+                                }
+                                echo "</tbody>";
+                                echo "</table>";
+                            } else {
+                                echo '<div class="alert alert-info"><em>No records were found.</em></div>';
+                            }
+                        } else {
+                            echo "ERROR: Could not execute query: $sql. " . var_dump($link->errorInfo());
                         }
-                        echo "</tbody>";
-                        echo "</table>";
-                    } else {
-                        echo '<div class="alert alert-info"><em>No records were found.</em></div>';
-                    }
-                } else {
-                    echo "ERROR: Could not execute query: $sql. " . var_dump($link->errorInfo());
-                }
-                // destruindo as variáveis do bando de dados
-                disconnectDataBase();
-                ?>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-12">
-                <div class="mt-5 mb-3 clearfix">
-                    <p class="pull-left"><a href="logout.php">Logout</a></p>
+                        // destruindo as variáveis do bando de dados
+                        disconnectDataBase();
+                        ?>
+
+                    </div>
+                </div>
+                <div class="row justify-content-center mt-4">
+                    <div class="col12 col-md-10">
+                        <div class="clearfix">
+                            <p class="pull-right"><a href="logout.php">Logout</a></p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
