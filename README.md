@@ -8,6 +8,16 @@ Foi utilizado o recurso da biblioteca Google2FA que impede que o mesmo OTP seja 
 
 Também foi utilizado uma biblioteca para assinatura digital dos registros e verificar se os dados foram alterados diretamente no banco de dados, com o sistema indicando que a assinatura não é válida.
 
+## Implementações
+ - salvar a senha criptografada no banco
+      - criptografar a senha
+      - logar com a senha criptografada
+ - exigir senha forte
+ - implementar o OTP
+ - assinatura digital
+      - gravar a chave privada criptografada no banco
+      - verificar se a assinatura é válida e se o registro foi alterado diretamente no banco
+
 
 ## Bibliotecas utilizadas
 - pragmarx/google2fa - para os recursos de 2FA TOTP
